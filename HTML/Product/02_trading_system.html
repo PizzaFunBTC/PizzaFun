@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PizzaFun - Trading System & Asset Custody</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --pizza-primary: #FF6B35;
+            --pizza-secondary: #8B5A3C;
+            --pizza-accent: #FFA500;
+            --glow-color: #FF6B35;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B3B8;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0D1117 0%, #161B22 50%, #21262D 100%);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        #fullContainer {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .title {
+            color: var(--pizza-primary);
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px var(--glow-color);
+        }
+        .subtitle {
+            color: var(--text-secondary);
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: rgba(33, 38, 45, 0.8);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .section-title {
+            color: var(--pizza-accent);
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--pizza-primary);
+            padding-bottom: 8px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .phase-card {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.15) 0%, rgba(139, 90, 60, 0.15) 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            height: 100%;
+        }
+        .phase-title {
+            color: var(--pizza-primary);
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .phase-formula {
+            background: rgba(13, 17, 23, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--pizza-accent);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+        }
+        .phase-details {
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        .process-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(13, 17, 23, 0.6);
+            border-radius: 12px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .flow-step {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+            margin: 10px;
+        }
+        .step-icon {
+            background: var(--pizza-primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .step-title {
+            color: var(--pizza-primary);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .step-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .flow-arrow {
+            color: var(--pizza-accent);
+            font-size: 1.5rem;
+            margin: 0 15px;
+        }
+        .chart-container {
+            background: rgba(13, 17, 23, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+        }
+        .chart-title {
+            color: var(--pizza-accent);
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-item {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+        }
+        .feature-title {
+            color: var(--pizza-primary);
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .feature-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+        .custody-advantage {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2) 0%, rgba(255, 165, 0, 0.2) 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid var(--pizza-primary);
+        }
+        .advantage-title {
+            color: var(--pizza-primary);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .advantage-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .trading-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+        .stat-value {
+            color: var(--pizza-primary);
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .source {
+            margin-top: 30px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="fullContainer">
+        <div class="title">Trading System & Asset Custody</div>
+        <div class="subtitle">Dual-Phase Trading Mechanism & TSS Security Architecture</div>
+
+        <!-- Dual-Phase Trading Mechanism -->
+        <div class="section">
+            <div class="section-title">🔄 Dual-Phase Trading Mechanism</div>
+            <div class="grid-2">
+                <div class="phase-card">
+                    <div class="phase-title">🥖 Baking Phase</div>
+                    <div class="phase-formula">y = e^x</div>
+                    <div class="phase-details">
+                        <strong>Initial Token Launch:</strong><br>
+                        • 80% of token supply sold at 0.211 BTC<br>
+                        • Exponential bonding curve ensures fair price discovery<br>
+                        • Price rises steadily with purchase volume<br>
+                        • Prevents excessive speculation during launch<br>
+                        • 1% platform fee for sustainable growth
+                    </div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-title">🍕 Serving Phase</div>
+                    <div class="phase-formula">k = X × Y</div>
+                    <div class="phase-details">
+                        <strong>Mature Market Trading:</strong><br>
+                        • Remaining 20% supply + 0.2 BTC auto-deposited to AMM<br>
+                        • Constant product formula for balanced liquidity<br>
+                        • Bidirectional trading with mature market dynamics<br>
+                        • 0.5% total fee (0.3% to LPs, 0.2% platform)<br>
+                        • Enhanced capital efficiency and price stability
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trading Process Flow -->
+        <div class="section">
+            <div class="section-title">📈 Complete Trading Process Flow</div>
+            <div class="process-flow">
+                <div class="flow-step">
+                    <div class="step-icon">1</div>
+                    <div class="step-title">Token Creation</div>
+                    <div class="step-desc">Instant token issuance with built-in liquidity</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-icon">2</div>
+                    <div class="step-title">Baking Phase</div>
+                    <div class="step-desc">Bonding curve trading (y = e^x)</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-icon">3</div>
+                    <div class="step-title">Auto Transition</div>
+                    <div class="step-desc">Seamless AMM pool creation</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-icon">4</div>
+                    <div class="step-title">Serving Phase</div>
+                    <div class="step-desc">Mature AMM trading (k = X×Y)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <!-- Trading System Features -->
+            <div class="section">
+                <div class="section-title">⚡ High-Speed Trading Features</div>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-title">⚡ Quick Buy/Sell</div>
+                        <div class="feature-desc">One-click trading without confirmation screens, millisecond execution</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-title">📊 Real-time Charts</div>
+                        <div class="feature-desc">Instant price movement updates, transparent market views</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-title">🎯 Multi-dimensional Filtering</div>
+                        <div class="feature-desc">Sort by market cap, volume, price changes, holder count</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-title">🔧 Multi-protocol Support</div>
+                        <div class="feature-desc">Runes, Ordinals, BRC-20 unified trading experience</div>
+                    </div>
+                </div>
+                
+                <div class="trading-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">2s</div>
+                        <div class="stat-label">Confirmation Time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">$0</div>
+                        <div class="stat-label">Gas Fees</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">35K</div>
+                        <div class="stat-label">TPS Capacity</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">99.9%</div>
+                        <div class="stat-label">Uptime</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Curve Comparison -->
+            <div class="section">
+                <div class="section-title">📈 Trading Phase Analysis</div>
+                <div class="chart-container">
+                    <div class="chart-title">Baking vs Serving Phase Price Dynamics</div>
+                    <canvas id="pricePhaseChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- TSS Security Architecture -->
+        <div class="section">
+            <div class="section-title">🔒 TSS Decentralized Asset Custody System</div>
+            <div class="grid-2">
+                <div>
+                    <div class="custody-advantage">
+                        <div class="advantage-title">🔐 Decentralized Verification</div>
+                        <div class="advantage-desc">All transactions verified by multi-party consensus, eliminating single points of failure</div>
+                    </div>
+                    <div class="custody-advantage">
+                        <div class="advantage-title">⚡ Fast Deposits/Withdrawals</div>
+                        <div class="advantage-desc">High-speed trading after single confirmation, no multi-block waiting</div>
+                    </div>
+                    <div class="custody-advantage">
+                        <div class="advantage-title">💰 Zero Gas Fees</div>
+                        <div class="advantage-desc">No additional network fees, significantly enhanced user experience</div>
+                    </div>
+                    <div class="custody-advantage">
+                        <div class="advantage-title">🔄 Node Redundancy</div>
+                        <div class="advantage-desc">System operates safely even with some validation nodes offline</div>
+                    </div>
+                    <div class="custody-advantage">
+                        <div class="advantage-title">🔧 Node Replacement</div>
+                        <div class="advantage-desc">Automatic replacement of unresponsive nodes ensures long-term stability</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">TSS Security Components</div>
+                    <canvas id="tssChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slice Bridging Technology -->
+        <div class="section">
+            <div class="section-title">🌉 Slice Bridging Technology</div>
+            <div class="grid-2">
+                <div class="chart-container">
+                    <div class="chart-title">Cross-Chain Asset Flow</div>
+                    <canvas id="bridgeChart" width="400" height="300"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Security vs Speed Optimization</div>
+                    <canvas id="optimizationChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fee Structure Analysis -->
+        <div class="section">
+            <div class="section-title">💰 Fee Structure & Revenue Distribution</div>
+            <div class="chart-container">
+                <div class="chart-title">Dual-Phase Fee Comparison & Distribution</div>
+                <canvas id="feeStructureChart" width="800" height="400"></canvas>
+            </div>
+        </div>
+
+        <div class="source">
+            Data Source: PizzaFun Product Features Documentation | Trading System & Security Architecture Analysis
+        </div>
+    </div>
+
+    <script>
+        // Price Phase Chart
+        const pricePhaseCtx = document.getElementById('pricePhaseChart').getContext('2d');
+        new Chart(pricePhaseCtx, {
+            type: 'line',
+            data: {
+                labels: ['0%', '20%', '40%', '60%', '80%', '100%'],
+                datasets: [{
+                    label: 'Baking Phase (y = e^x)',
+                    data: [1, 2.72, 7.39, 20.09, 54.6, 148.4],
+                    borderColor: '#FF6B35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Serving Phase (k = X×Y)',
+                    data: [null, null, null, null, 54.6, 45.2],
+                    borderColor: '#FFA500',
+                    backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                    fill: true,
+                    tension: 0.2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#FFFFFF'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#FFFFFF'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#FFFFFF'
+                        }
+                    }
+                }
+            }
+        });
+
+        // TSS Security Chart
+        const tssCtx = document.getElementById('tssChart').getContext('2d');
+        new Chart(tssCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Multi-Party Computation', 'Threshold Signatures', 'Node Redundancy', 'Consensus Verification', 'Key Management'],
+                datasets: [{
+                    data: [25, 25, 20, 20, 10],
+                    backgroundColor: [
+                        '#FF6B35',
+                        '#FFA500',
+                        '#FF8C42',
+                        '#FFB347',
+                        '#FFCCCB'
+                    ],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#FFFFFF',
+                            padding: 10,
+                            font: {
+                                size: 10
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Bridge Chart
+        const bridgeCtx = document.getElementById('bridgeChart').getContext('2d');
+        new Chart(bridgeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Bitcoin Layer', 'Slice Bridge', 'CrustNet Layer', 'Application Layer'],
+                datasets: [{
+                    data: [30, 25, 30, 15],
+                    backgroundColor: [
+                        '#FF6B35',
+                        '#FFA500',
+                        '#FF8C42',
+                        '#FFB347'
+                    ],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#FFFFFF',
+                            padding: 10,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Optimization Chart
+        const optimizationCtx = document.getElementById('optimizationChart').getContext('2d');
+        new Chart(optimizationCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Security', 'Speed', 'Cost', 'Reliability', 'Scalability', 'User Experience'],
+                datasets: [{
+                    label: 'PizzaFun TSS',
+                    data: [95, 98, 100, 92, 88, 96],
+                    fill: true,
+                    backgroundColor: 'rgba(255, 107, 53, 0.2)',
+                    borderColor: '#FF6B35',
+                    pointBackgroundColor: '#FF6B35'
+                }, {
+                    label: 'Traditional Custody',
+                    data: [70, 40, 60, 75, 50, 45],
+                    fill: true,
+                    backgroundColor: 'rgba(139, 90, 60, 0.2)',
+                    borderColor: '#8B5A3C',
+                    pointBackgroundColor: '#8B5A3C'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#FFFFFF'
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        angleLines: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        pointLabels: {
+                            color: '#FFFFFF',
+                            font: {
+                                size: 11
+                            }
+                        },
+                        ticks: {
+                            color: '#FFFFFF',
+                            stepSize: 20
+                        }
+                    }
+                }
+            }
+        });
+
+        // Fee Structure Chart
+        const feeStructureCtx = document.getElementById('feeStructureChart').getContext('2d');
+        new Chart(feeStructureCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Baking Phase', 'Serving Phase - Platform', 'Serving Phase - LPs'],
+                datasets: [{
+                    label: 'Fee Percentage',
+                    data: [1.0, 0.2, 0.3],
+                    backgroundColor: [
+                        '#FF6B35',
+                        '#FFA500',
+                        '#FF8C42'
+                    ],
+                    borderColor: [
+                        '#FF4500',
+                        '#FF8C00',
+                        '#FF7F50'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#FFFFFF'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 1.2,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#FFFFFF',
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#FFFFFF'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

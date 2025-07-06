@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PizzaFun - Technical Infrastructure & Governance</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --pizza-primary: #FF6B35;
+            --pizza-secondary: #8B5A3C;
+            --pizza-accent: #FFA500;
+            --glow-color: #FF6B35;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B3B8;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0D1117 0%, #161B22 50%, #21262D 100%);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        #fullContainer {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .title {
+            color: var(--pizza-primary);
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px var(--glow-color);
+        }
+        .subtitle {
+            color: var(--text-secondary);
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: rgba(33, 38, 45, 0.8);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .section-title {
+            color: var(--pizza-accent);
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--pizza-primary);
+            padding-bottom: 8px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .infrastructure-card {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.15) 0%, rgba(139, 90, 60, 0.15) 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .infrastructure-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.2);
+        }
+        .infra-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        .infra-title {
+            color: var(--pizza-primary);
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .infra-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .dao-structure {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            height: 100%;
+        }
+        .dao-title {
+            color: var(--pizza-primary);
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .dao-multisig {
+            background: rgba(13, 17, 23, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+        }
+        .multisig-ratio {
+            color: var(--pizza-accent);
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .multisig-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        .governance-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(13, 17, 23, 0.6);
+            border-radius: 12px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .flow-step {
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+            margin: 10px;
+        }
+        .flow-arrow {
+            color: var(--pizza-accent);
+            font-size: 1.5rem;
+            margin: 0 10px;
+        }
+        .chart-container {
+            background: rgba(13, 17, 23, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+        }
+        .chart-title {
+            color: var(--pizza-accent);
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .performance-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid var(--pizza-primary);
+        }
+        .metric-label {
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+        .metric-value {
+            color: var(--pizza-accent);
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        .fee-breakdown {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .fee-title {
+            color: var(--pizza-primary);
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .fee-details {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .referral-highlight {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2) 0%, rgba(255, 165, 0, 0.2) 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--pizza-primary);
+            margin: 20px 0;
+            text-align: center;
+        }
+        .referral-percentage {
+            color: var(--pizza-primary);
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .referral-desc {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+        .architecture-layer {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid var(--pizza-accent);
+        }
+        .layer-title {
+            color: var(--pizza-primary);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .layer-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .source {
+            margin-top: 30px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="fullContainer">
+        <div class="title">Technical Infrastructure & Governance</div>
+        <div class="subtitle">CrustNet Architecture & Dual DAO Governance Framework</div>
+
+        <!-- CrustNet Technical Infrastructure -->
+        <div class="section">
+            <div class="section-title">🔧 CrustNet Technical Infrastructure</div>
+            <div class="grid-4">
+                <div class="infrastructure-card">
+                    <div class="infra-icon">⚡</div>
+                    <div class="infra-title">High-Speed Processing</div>
+                    <div class="infra-desc">2-second final confirmation, 300x faster than traditional Bitcoin</div>
+                </div>
+                <div class="infrastructure-card">
+                    <div class="infra-icon">🔒</div>
+                    <div class="infra-title">Security Framework</div>
+                    <div class="infra-desc">Multi-signature protection, threshold signatures, node redundancy</div>
+                </div>
+                <div class="infrastructure-card">
+                    <div class="infra-icon">🔄</div>
+                    <div class="infra-title">Modular Architecture</div>
+                    <div class="infra-desc">Smooth integration of different protocols (Runes, Ordinals, BRC-20)</div>
+                </div>
+                <div class="infrastructure-card">
+                    <div class="infra-icon">📊</div>
+                    <div class="infra-title">Real-time Updates</div>
+                    <div class="infra-desc">Instant transaction and price movement reflection without refresh</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Architecture Layers -->
+        <div class="section">
+            <div class="section-title">🏗️ System Architecture Layers</div>
+            <div class="grid-2">
+                <div>
+                    <div class="architecture-layer">
+                        <div class="layer-title">Application Layer</div>
+                        <div class="layer-desc">User interface, trading dashboard, portfolio management, real-time charts</div>
+                    </div>
+                    <div class="architecture-layer">
+                        <div class="layer-title">Protocol Layer</div>
+                        <div class="layer-desc">Multi-protocol support, unified trading experience, cross-chain compatibility</div>
+                    </div>
+                    <div class="architecture-layer">
+                        <div class="layer-title">CrustNet Layer</div>
+                        <div class="layer-desc">High-speed processing, consensus mechanism, transaction validation</div>
+                    </div>
+                    <div class="architecture-layer">
+                        <div class="layer-title">Bitcoin Base Layer</div>
+                        <div class="layer-desc">Ultimate security, decentralized foundation, asset custody</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Architecture Performance Metrics</div>
+                    <canvas id="architectureChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="section">
+            <div class="section-title">📈 Core Performance Metrics</div>
+            <div class="grid-2">
+                <div>
+                    <div class="performance-metric">
+                        <div class="metric-label">Transaction Confirmation</div>
+                        <div class="metric-value">2 seconds</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="metric-label">Throughput Capacity</div>
+                        <div class="metric-value">35,000 TPS</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="metric-label">Network Uptime</div>
+                        <div class="metric-value">99.9%</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="metric-label">Gas Fee Cost</div>
+                        <div class="metric-value">$0 (Zero)</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="metric-label">Node Redundancy</div>
+                        <div class="metric-value">Multi-layer</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="metric-label">Security Score</div>
+                        <div class="metric-value">95/100</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Performance vs Traditional Systems</div>
+                    <canvas id="performanceChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dual DAO Governance -->
+        <div class="section">
+            <div class="section-title">🏛️ Dual DAO Governance Structure</div>
+            <div class="grid-2">
+                <div class="dao-structure">
+                    <div class="dao-title">📄 Contract DAO</div>
+                    <div class="dao-multisig">
+                        <div class="multisig-ratio">4 / 7</div>
+                        <div class="multisig-desc">Multi-signature Mechanism</div>
+                    </div>
+                    <div style="color: var(--text-secondary); line-height: 1.5;">
+                        <strong>Responsibilities:</strong><br>
+                        • Smart contract upgrades<br>
+                        • Technical governance decisions<br>
+                        • Protocol parameter adjustments<br><br>
+                        <strong>Decentralization:</strong><br>
+                        PizzaFun team controls only 2 out of 7 signature seats, ensuring community-driven technical decisions
+                    </div>
+                </div>
+                <div class="dao-structure">
+                    <div class="dao-title">💰 Treasury DAO</div>
+                    <div class="dao-multisig">
+                        <div class="multisig-ratio">3 / 5</div>
+                        <div class="multisig-desc">Multi-signature Mechanism</div>
+                    </div>
+                    <div style="color: var(--text-secondary); line-height: 1.5;">
+                        <strong>Responsibilities:</strong><br>
+                        • Protocol revenue management<br>
+                        • Financial decision making<br>
+                        • Fund allocation oversight<br><br>
+                        <strong>Full Community Control:</strong><br>
+                        PizzaFun team holds NO signature seats, achieving complete community financial control
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Governance Process Flow -->
+        <div class="section">
+            <div class="section-title">🗳️ Governance Decision Process</div>
+            <div class="governance-flow">
+                <div class="flow-step">
+                    <div style="color: var(--pizza-primary); font-size: 1.1rem; font-weight: bold;">Proposal</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Community submits governance proposal</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div style="color: var(--pizza-primary); font-size: 1.1rem; font-weight: bold;">Discussion</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Open community debate period</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div style="color: var(--pizza-primary); font-size: 1.1rem; font-weight: bold;">Voting</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Multi-signature voting process</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div style="color: var(--pizza-primary); font-size: 1.1rem; font-weight: bold;">Implementation</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Approved changes executed</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div style="color: var(--pizza-primary); font-size: 1.1rem; font-weight: bold;">Monitoring</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Impact assessment & feedback</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <!-- Fee Structure & Distribution -->
+            <div class="section">
+                <div class="section-title">💰 Transparent Fee Structure</div>
+                <div class="fee-breakdown">
+                    <div class="fee-title">Baking Phase Fee Structure</div>
+                    <div class="fee-details">
+                        • 1% platform fee during bonding curve trading<br>
+                        • Revenue supports platform development and operations<br>
+                        • Ensures sustainable ecosystem growth
+                    </div>
+                </div>
+                <div class="fee-breakdown">
+                    <div class="fee-title">Serving Phase Fee Structure</div>
+                    <div class="fee-details">
+                        • Total 0.5% trading fee during AMM phase<br>
+                        • 0.3% distributed to liquidity providers<br>
+                        • 0.2% retained as platform operational fee
+                    </div>
+                </div>
+                <div class="referral-highlight">
+                    <div class="referral-percentage">25%</div>
+                    <div class="referral-desc">"Refer to Earn" Program<br>Platform fees shared with referrers</div>
+                </div>
+            </div>
+
+            <!-- Governance Impact Analysis -->
+            <div class="section">
+                <div class="section-title">📊 Governance Impact Analysis</div>
+                <div class="chart-container">
+                    <div class="chart-title">Decentralization vs Efficiency Balance</div>
+                    <canvas id="governanceChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Protocol Integration Roadmap -->
+        <div class="section">
+            <div class="section-title">🔗 Multi-Protocol Integration Framework</div>
+            <div class="chart-container">
+                <div class="chart-title">Protocol Support Timeline & Compatibility</div>
+                <canvas id="protocolChart" width="800" height="400"></canvas>
+            </div>
+        </div>
+
+        <div class="source">
+            Data Source: PizzaFun Product Features Documentation | Technical Infrastructure & Governance Analysis
+        </div>
+    </div>
+
+    <script>
+        // Architecture Performance Chart
+        const architectureCtx = document.getElementById('architectureChart').getContext('2d');
+        new Chart(architectureCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Speed', 'Security', 'Scalability', 'Reliability', 'Cost Efficiency', 'User Experience'],
+                datasets: [{
+                    label: 'CrustNet Performance',
+                    data: [98, 92, 85, 95, 100, 96],
+                    fill: true,
+                    backgroundColor: 'rgba(255, 107, 53, 0.2)',
+                    borderColor: '#FF6B35',
+                    pointBackgroundColor: '#FF6B35',
+                    pointBorderColor: '#FFFFFF',
+                    pointHoverBackgroundColor: '#FFFFFF',
+                    pointHoverBorderColor: '#FF6B35'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#FFFFFF'
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        angleLines: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        pointLabels: {
+                            color: '#FFFFFF',
+                            font: {
+                                size: 11
+                            }
+                        },
+                        ticks: {
+                            color: '#FFFFFF',
+                            stepSize: 20
+                        }
+                    }
+                }
+            }
+        });
+
+        // Performance Comparison Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Confirmation Time', 'TPS', 'Gas Fees', 'Uptime'],
+                datasets: [{
+                    label: 'Traditional Bitcoin',
+                    data: [600, 7, 25, 99.5],
+                    backgroundColor: '#8B5A3C',
+                    borderColor: '#654321',
+                    borderWidth: 1
+                }, {
+                    label: 'PizzaFun',
+                    data: [2, 35000, 0, 99.9],
+                    backgroundColor: '#FF6B35',
+                    borderColor: '#FF4500',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#FFFFFF'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#FFFFFF'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#FFFFFF'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Governance Analysis Chart
+        const governanceCtx = document.getElementById('governanceChart').getContext('2d');
+        new Chart(governanceCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Community Control', 'Technical Efficiency', 'Financial Autonomy', 'Decision Speed', 'Transparency'],
+                datasets: [{
+                    data: [85, 75, 95, 70, 90],
+                    backgroundColor: [
+                        '#FF6B35',
+                        '#FFA500',
+                        '#FF8C42',
+                        '#FFB347',
+                        '#FFCCCB'
+                    ],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#FFFFFF',
+                            padding: 10,
+                            font: {
+                                size: 10
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Protocol Integration Chart  
+        const protocolCtx = document.getElementById('protocolChart').getContext('2d');
+        new Chart(protocolCtx, {
+            type: 'line',
+            data: {
+                labels: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024', 'Q1 2025', 'Q2 2025'],
+                datasets: [{
+                    label: 'Runes Protocol',
+                    data: [100, 100, 100, 100, 100, 100],
+                    borderColor: '#FF6B35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                    fill: false,
+                    tension: 0.1
+                }, {
+                    label: 'Ordinals Integration',
+                    data: [0, 20, 60, 100, 100, 100],
+                    borderColor: '#FFA500',
+                    backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                    fill: false,
+                    tension: 0.4
+                }, {
+                    label: 'BRC-20 Support',
+                    data: [0, 0, 10, 40, 80, 100],
+                    borderColor: '#FF8C42',
+                    backgroundColor: 'rgba(255, 140, 66, 0.1)',
+                    fill: false,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#FFFFFF'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 110,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#FFFFFF',
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#FFFFFF'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

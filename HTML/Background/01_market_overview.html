@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PizzaFun - Market Overview & Growth Trends</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --pizza-primary: #FF6B35;
+            --pizza-secondary: #F7931E;
+            --pizza-accent: #FFD700;
+            --glow-color: rgba(255, 107, 53, 0.5);
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0D1117;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #FFFFFF;
+        }
+        #fullContainer {
+            width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .title {
+            color: var(--pizza-primary);
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-shadow: 0 0 15px var(--glow-color);
+        }
+        .subtitle {
+            color: var(--pizza-secondary);
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        #container {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .chart-container {
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            min-height: 320px;
+            box-shadow: 0 0 20px var(--glow-color);
+            backdrop-filter: blur(10px);
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        .stat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            justify-content: center;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            padding: 15px;
+            background: rgba(255, 107, 53, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid var(--pizza-primary);
+        }
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--pizza-primary);
+            min-width: 160px;
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+        .stat-label {
+            font-size: 16px;
+            color: #FFFFFF;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+        .source {
+            color: #FFFFFF;
+            font-size: 12px;
+            text-align: right;
+            margin-top: 15px;
+            opacity: 0.6;
+            font-style: italic;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(247, 147, 30, 0.2));
+            border: 1px solid var(--pizza-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .highlight-text {
+            font-size: 18px;
+            color: var(--pizza-accent);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="fullContainer">
+
+        <div class="title">PizzaFun Market Analysis</div>
+        <div class="subtitle">Bitcoin Token Market Overview & Growth Trends</div>
+        
+        <div class="highlight-box">
+            <div class="highlight-text">Bitcoin token trading volume exceeded $25B in 2024, with market growth of 600% from 2023-2024</div>
+        </div>
+        
+        <div id="container">
+            <div class="chart-container">
+                <canvas id="marketGrowthChart"></canvas>
+                <div class="source">Source: CoinGecko, BDC Consulting, 2024</div>
+            </div>
+            <div class="chart-container stat-container">
+                <div class="stat-item">
+                    <div class="stat-number">$25B</div>
+                    <div class="stat-label">Bitcoin Token Trading Volume (2024)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">600%</div>
+                    <div class="stat-label">Market Growth Rate (2023-2024)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">$100B</div>
+                    <div class="stat-label">Expected Market Size by 2026</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">82%</div>
+                    <div class="stat-label">Compound Annual Growth Rate</div>
+                </div>
+                <div class="source">Source: Forbes, Galaxy Digital Research, 2024</div>
+            </div>
+            <div class="chart-container full-width">
+                <canvas id="projectionChart"></canvas>
+                <div class="source">Source: Market Analysis & Growth Projections, 2024-2026</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pizzaPrimary = getComputedStyle(document.documentElement).getPropertyValue('--pizza-primary').trim();
+        const pizzaSecondary = getComputedStyle(document.documentElement).getPropertyValue('--pizza-secondary').trim();
+        const pizzaAccent = getComputedStyle(document.documentElement).getPropertyValue('--pizza-accent').trim();
+
+        // Market Growth Chart
+        const marketCtx = document.getElementById('marketGrowthChart').getContext('2d');
+        new Chart(marketCtx, {
+            type: 'bar',
+            data: {
+                labels: ['2023', '2024', '2025 (Proj)', '2026 (Proj)'],
+                datasets: [{
+                    label: 'Market Size ($B)',
+                    data: [4, 25, 55, 100],
+                    backgroundColor: [
+                        'rgba(255, 107, 53, 0.6)',
+                        'rgba(255, 107, 53, 0.8)',
+                        'rgba(247, 147, 30, 0.8)',
+                        'rgba(255, 215, 0, 0.8)'
+                    ],
+                    borderColor: pizzaPrimary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Bitcoin Token Market Growth',
+                        color: '#FFFFFF',
+                        font: { size: 18, weight: 'bold' }
+                    },
+                    legend: {
+                        labels: { color: '#FFFFFF' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 107, 53, 0.1)' },
+                        ticks: { color: '#FFFFFF' }
+                    },
+                    x: {
+                        grid: { color: 'rgba(255, 107, 53, 0.1)' },
+                        ticks: { color: '#FFFFFF' }
+                    }
+                }
+            }
+        });
+
+        // Market Projection Chart
+        const projectionCtx = document.getElementById('projectionChart').getContext('2d');
+        new Chart(projectionCtx, {
+            type: 'line',
+            data: {
+                labels: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024', 'Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026', 'Q2 2026'],
+                datasets: [
+                    {
+                        label: 'Trading Volume ($B)',
+                        data: [5, 8, 12, 25, 32, 42, 48, 55, 72, 100],
+                        borderColor: pizzaPrimary,
+                        backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: pizzaPrimary,
+                        pointBorderWidth: 2
+                    },
+                    {
+                        label: 'Active Users (M)',
+                        data: [0.5, 0.8, 1.2, 2.5, 3.2, 4.2, 4.8, 5.5, 7.2, 10],
+                        borderColor: pizzaSecondary,
+                        backgroundColor: 'rgba(247, 147, 30, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: pizzaSecondary,
+                        pointBorderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Bitcoin Token Market Growth Projection (2024-2026)',
+                        color: '#FFFFFF',
+                        font: { size: 18, weight: 'bold' }
+                    },
+                    legend: {
+                        labels: { color: '#FFFFFF' }
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255, 107, 53, 0.1)' },
+                        ticks: { color: '#FFFFFF' }
+                    },
+                    x: {
+                        grid: { color: 'rgba(255, 107, 53, 0.1)' },
+                        ticks: { color: '#FFFFFF' }
+                    }
+                }
+            }
+        });
+
+
+    </script>
+</body>
+</html>

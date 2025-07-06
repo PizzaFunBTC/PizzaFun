@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PizzaFun - Product Overview & Core Functions</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --pizza-primary: #FF6B35;
+            --pizza-secondary: #8B5A3C;
+            --pizza-accent: #FFA500;
+            --glow-color: #FF6B35;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B3B8;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0D1117 0%, #161B22 50%, #21262D 100%);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        #fullContainer {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .title {
+            color: var(--pizza-primary);
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px var(--glow-color);
+        }
+        .subtitle {
+            color: var(--text-secondary);
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: rgba(33, 38, 45, 0.8);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .section-title {
+            color: var(--pizza-accent);
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--pizza-primary);
+            padding-bottom: 8px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .breakthrough-card {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.15) 0%, rgba(139, 90, 60, 0.15) 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .breakthrough-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(255, 107, 53, 0.3);
+        }
+        .breakthrough-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        .breakthrough-value {
+            color: var(--pizza-primary);
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .breakthrough-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        .pillar-card {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            height: 100%;
+        }
+        .pillar-title {
+            color: var(--pizza-primary);
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .pillar-desc {
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        .feature-list li {
+            color: var(--text-secondary);
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 107, 53, 0.1);
+            position: relative;
+            padding-left: 20px;
+        }
+        .feature-list li:before {
+            content: "▶";
+            color: var(--pizza-accent);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        .chart-container {
+            background: rgba(13, 17, 23, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+        }
+        .chart-title {
+            color: var(--pizza-accent);
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2) 0%, rgba(255, 165, 0, 0.2) 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--pizza-primary);
+            margin: 20px 0;
+            text-align: center;
+        }
+        .highlight-title {
+            color: var(--pizza-primary);
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .highlight-desc {
+            color: var(--text-primary);
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(13, 17, 23, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+        }
+        .comparison-table th {
+            background: rgba(255, 107, 53, 0.2);
+            color: var(--pizza-primary);
+            font-weight: bold;
+        }
+        .comparison-table .winner {
+            color: var(--pizza-accent);
+            font-weight: bold;
+        }
+        .source {
+            margin-top: 30px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="fullContainer">
+        <div class="title">Product Overview & Core Functions</div>
+        <div class="subtitle">Revolutionary Bitcoin Token Trading Ecosystem</div>
+
+        <!-- Revolutionary Breakthroughs -->
+        <div class="section">
+            <div class="section-title">🚀 Revolutionary Performance Breakthroughs</div>
+            <div class="grid-3">
+                <div class="breakthrough-card">
+                    <div class="breakthrough-icon">⚡</div>
+                    <div class="breakthrough-value">2 SEC</div>
+                    <div class="breakthrough-label">Transaction Confirmation</div>
+                </div>
+                <div class="breakthrough-card">
+                    <div class="breakthrough-icon">💰</div>
+                    <div class="breakthrough-value">ZERO</div>
+                    <div class="breakthrough-label">Gas Fees</div>
+                </div>
+                <div class="breakthrough-card">
+                    <div class="breakthrough-icon">🔒</div>
+                    <div class="breakthrough-value">TSS</div>
+                    <div class="breakthrough-label">Decentralized Security</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Platform Innovation -->
+        <div class="section">
+            <div class="section-title">💡 Core Platform Innovation</div>
+            <div class="highlight-box">
+                <div class="highlight-title">Lightning Trading System for Bitcoin Network</div>
+                <div class="highlight-desc">
+                    Based on CrustNet backend infrastructure, transaction confirmation reduced from traditional 10 minutes to 2 seconds, 
+                    while maintaining decentralized nature and security. Revolutionary combination of transaction speed and zero Gas fees 
+                    brings unprecedented liquidity and user experience to the Bitcoin token market.
+                </div>
+            </div>
+        </div>
+
+        <!-- Three Fundamental Pillars -->
+        <div class="section">
+            <div class="section-title">🏛️ Three Fundamental Pillars</div>
+            <div class="grid-3">
+                <div class="pillar-card">
+                    <div class="pillar-title">⚡ High-Speed Trading</div>
+                    <div class="pillar-desc">
+                        Dual-phase trading model from bonding curve to AMM, ensuring smooth token transition.
+                    </div>
+                    <ul class="feature-list">
+                        <li>Millisecond execution</li>
+                        <li>Multi-dimensional filtering</li>
+                        <li>Real-time updates</li>
+                        <li>Multi-protocol support</li>
+                    </ul>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-title">🔒 Decentralized Custody</div>
+                    <div class="pillar-desc">
+                        TSS ensures truly decentralized Bitcoin custody with MPC security.
+                    </div>
+                    <ul class="feature-list">
+                        <li>Verification consensus</li>
+                        <li>Fast deposits</li>
+                        <li>Node redundancy</li>
+                        <li>Slice bridging tech</li>
+                    </ul>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-title">🏛️ Community Governance</div>
+                    <div class="pillar-desc">
+                        Multi-signature DAO structure balances efficiency with decentralized security.
+                    </div>
+                    <ul class="feature-list">
+                        <li>4-of-7 multi-sig control</li>
+                        <li>3-of-5 treasury management</li>
+                        <li>Transparent fees</li>
+                        <li>Community decisions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Comparison -->
+        <div class="section">
+            <div class="section-title">📊 Performance Comparison Analysis</div>
+            <div class="chart-container">
+                <div class="chart-title">Speed & Cost Advantage Comparison</div>
+                <canvas id="performanceChart" width="800" height="400"></canvas>
+            </div>
+        </div>
+
+        <!-- Detailed Platform Comparison -->
+        <div class="section">
+            <div class="section-title">🔍 Platform Feature Comparison</div>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Traditional Bitcoin</th>
+                        <th>Ethereum L2</th>
+                        <th>PizzaFun</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Confirmation Time</strong></td>
+                        <td>10+ minutes</td>
+                        <td>12-15 seconds</td>
+                        <td class="winner">2 seconds</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gas Fees</strong></td>
+                        <td>$5-50</td>
+                        <td>$0.5-5</td>
+                        <td class="winner">$0 (Zero)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Security Model</strong></td>
+                        <td>PoW Consensus</td>
+                        <td>Rollup Security</td>
+                        <td class="winner">TSS + Bitcoin Security</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Token Standards</strong></td>
+                        <td>Limited</td>
+                        <td>ERC-20 Only</td>
+                        <td class="winner">Runes, Ordinals, BRC-20</td>
+                    </tr>
+                    <tr>
+                        <td><strong>User Experience</strong></td>
+                        <td>Complex</td>
+                        <td>Moderate</td>
+                        <td class="winner">One-click Trading</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Technology Stack Visualization -->
+        <div class="section">
+            <div class="section-title">🔧 Technology Stack Architecture</div>
+            <div class="grid-2">
+                <div class="chart-container">
+                    <div class="chart-title">Core Technology Components</div>
+                    <canvas id="techStackChart" width="400" height="300"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Security & Performance Metrics</div>
+                    <canvas id="metricsChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="source">
+            Data Source: PizzaFun Product Features Documentation | Revolutionary Bitcoin Token Trading Platform
+        </div>
+    </div>
+
+    <script>
+        // Performance Comparison Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Confirmation Time', 'Gas Fees', 'TPS', 'User Experience'],
+                datasets: [{
+                    label: 'Traditional Bitcoin',
+                    data: [600, 25, 7, 3],
+                    backgroundColor: '#8B5A3C',
+                    borderColor: '#654321',
+                    borderWidth: 1
+                }, {
+                    label: 'Ethereum L2',
+                    data: [15, 2.5, 2000, 6],
+                    backgroundColor: '#627EEA',
+                    borderColor: '#4169E1',
+                    borderWidth: 1
+                }, {
+                    label: 'PizzaFun',
+                    data: [2, 0, 35000, 10],
+                    backgroundColor: '#FF6B35',
+                    borderColor: '#FF4500',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#FFFFFF'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label + ': ';
+                                if (context.dataIndex === 0) label += context.parsed.y + ' seconds';
+                                else if (context.dataIndex === 1) label += '$' + context.parsed.y;
+                                else if (context.dataIndex === 2) label += context.parsed.y + ' TPS';
+                                else label += context.parsed.y + '/10';
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#FFFFFF'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#FFFFFF'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Technology Stack Chart
+        const techStackCtx = document.getElementById('techStackChart').getContext('2d');
+        new Chart(techStackCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['CrustNet Backend', 'TSS Security', 'Slice Bridging', 'Dual-Phase Trading', 'Multi-Protocol Support'],
+                datasets: [{
+                    data: [25, 20, 15, 25, 15],
+                    backgroundColor: [
+                        '#FF6B35',
+                        '#FFA500',
+                        '#FF8C42',
+                        '#FFB347',
+                        '#FFCCCB'
+                    ],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#FFFFFF',
+                            padding: 10,
+                            font: {
+                                size: 10
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Security & Performance Metrics
+        const metricsCtx = document.getElementById('metricsChart').getContext('2d');
+        new Chart(metricsCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Speed', 'Security', 'Cost Efficiency', 'User Experience', 'Scalability', 'Decentralization'],
+                datasets: [{
+                    label: 'PizzaFun Performance',
+                    data: [95, 90, 100, 95, 85, 88],
+                    fill: true,
+                    backgroundColor: 'rgba(255, 107, 53, 0.2)',
+                    borderColor: '#FF6B35',
+                    pointBackgroundColor: '#FF6B35',
+                    pointBorderColor: '#FFFFFF',
+                    pointHoverBackgroundColor: '#FFFFFF',
+                    pointHoverBorderColor: '#FF6B35'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#FFFFFF'
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        angleLines: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        pointLabels: {
+                            color: '#FFFFFF',
+                            font: {
+                                size: 11
+                            }
+                        },
+                        ticks: {
+                            color: '#FFFFFF',
+                            stepSize: 20
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

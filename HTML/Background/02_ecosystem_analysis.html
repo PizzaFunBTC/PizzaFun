@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PizzaFun - Bitcoin Ecosystem Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --pizza-primary: #FF6B35;
+            --pizza-secondary: #F7931E;
+            --pizza-accent: #FFD700;
+            --glow-color: rgba(255, 107, 53, 0.5);
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0D1117;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #FFFFFF;
+        }
+        #fullContainer {
+            width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .title {
+            color: var(--pizza-primary);
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-shadow: 0 0 15px var(--glow-color);
+        }
+        .subtitle {
+            color: var(--pizza-secondary);
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        #container {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .chart-container {
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            min-height: 320px;
+            box-shadow: 0 0 20px var(--glow-color);
+            backdrop-filter: blur(10px);
+        }
+        .stat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: center;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background: rgba(255, 107, 53, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid var(--pizza-primary);
+        }
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--pizza-primary);
+            min-width: 140px;
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+        .stat-label {
+            font-size: 16px;
+            color: #FFFFFF;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+        .source {
+            color: #FFFFFF;
+            font-size: 12px;
+            text-align: right;
+            margin-top: 15px;
+            opacity: 0.6;
+            font-style: italic;
+        }
+        .comparison-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(247, 147, 30, 0.2));
+            border: 1px solid var(--pizza-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .vs-text {
+            font-size: 24px;
+            color: var(--pizza-accent);
+            font-weight: bold;
+            margin: 0 20px;
+        }
+        .comparison-item {
+            display: inline-block;
+            padding: 15px 25px;
+            margin: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .old-tech {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff4444;
+            color: #ff6666;
+        }
+        .new-tech {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #44ff44;
+            color: #66ff66;
+        }
+    </style>
+</head>
+<body>
+    <div id="fullContainer">
+
+        <div class="title">Bitcoin Ecosystem Analysis</div>
+        <div class="subtitle">Layer 2 Solutions & Platform Distribution</div>
+        
+        <div class="comparison-box">
+            <div class="comparison-item old-tech">Traditional Bitcoin: 10 min confirmation</div>
+            <span class="vs-text">VS</span>
+            <div class="comparison-item new-tech">Modern Solutions: 32 sec confirmation</div>
+        </div>
+        
+        <div id="container">
+            <div class="chart-container">
+                <canvas id="ecosystemChart"></canvas>
+                <div class="source">Source: DefiLlama, CoinMarketCap, 2024</div>
+            </div>
+            <div class="chart-container stat-container">
+                <div class="stat-item">
+                    <div class="stat-number">$10B</div>
+                    <div class="stat-label">Expected Bitcoin Layer 2 TVL by 2025</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">Active Bitcoin Token Platforms</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">32 sec</div>
+                    <div class="stat-label">Advanced Platform Confirmation Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10 min</div>
+                    <div class="stat-label">Traditional Bitcoin Block Time</div>
+                </div>
+                <div class="source">Source: Platform Analysis, Odin.fun, 2024</div>
+            </div>
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+                <div class="source">Source: Technical Performance Analysis, 2024</div>
+            </div>
+            <div class="chart-container">
+                <canvas id="protocolChart"></canvas>
+                <div class="source">Source: Bitcoin Protocol Analysis, 2024</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pizzaPrimary = getComputedStyle(document.documentElement).getPropertyValue('--pizza-primary').trim();
+        const pizzaSecondary = getComputedStyle(document.documentElement).getPropertyValue('--pizza-secondary').trim();
+        const pizzaAccent = getComputedStyle(document.documentElement).getPropertyValue('--pizza-accent').trim();
+
+        // Bitcoin Ecosystem Distribution Chart
+        const ecosystemCtx = document.getElementById('ecosystemChart').getContext('2d');
+        new Chart(ecosystemCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Major Platforms', 'Layer 2 Solutions', 'DEX Protocols', 'Emerging Platforms', 'Others'],
+                datasets: [{
+                    data: [35, 25, 20, 15, 5],
+                    backgroundColor: [
+                        'rgba(255, 107, 53, 1)',
+                        'rgba(247, 147, 30, 0.8)',
+                        'rgba(255, 215, 0, 0.8)',
+                        'rgba(255, 107, 53, 0.6)',
+                        'rgba(247, 147, 30, 0.4)'
+                    ],
+                    borderColor: '#0D1117',
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Bitcoin Token Platform Distribution',
+                        color: '#FFFFFF',
+                        font: { size: 16, weight: 'bold' }
+                    },
+                    legend: {
+                        labels: { color: '#FFFFFF', font: { size: 12 } }
+                    }
+                }
+            }
+        });
+
+        // Performance Comparison Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Traditional Bitcoin', 'Lightning Network', 'Modern L2 Solutions', 'PizzaFun Target'],
+                datasets: [{
+                    label: 'Confirmation Time (seconds)',
+                    data: [600, 60, 32, 2],
+                    backgroundColor: [
+                        'rgba(255, 0, 0, 0.6)',
+                        'rgba(255, 165, 0, 0.6)',
+                        'rgba(255, 215, 0, 0.6)',
+                        'rgba(0, 255, 0, 0.8)'
+                    ],
+                    borderColor: pizzaPrimary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Transaction Confirmation Speed Comparison',
+                        color: '#FFFFFF',
+                        font: { size: 16, weight: 'bold' }
+                    },
+                    legend: {
+                        labels: { color: '#FFFFFF' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        type: 'logarithmic',
+                        grid: { color: 'rgba(255, 107, 53, 0.1)' },
+                        ticks: { color: '#FFFFFF' }
+                    },
+                    x: {
+                        grid: { color: 'rgba(255, 107, 53, 0.1)' },
+                        ticks: { color: '#FFFFFF' }
+                    }
+                }
+            }
+        });
+
+        // Protocol Usage Chart
+        const protocolCtx = document.getElementById('protocolChart').getContext('2d');
+        new Chart(protocolCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Speed', 'Security', 'User Experience', 'Liquidity', 'Adoption', 'Innovation'],
+                datasets: [
+                    {
+                        label: 'Traditional Platforms',
+                        data: [2, 8, 3, 6, 8, 4],
+                        borderColor: 'rgba(255, 0, 0, 0.8)',
+                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                        pointBackgroundColor: 'rgba(255, 0, 0, 0.8)'
+                    },
+                    {
+                        label: 'Modern L2 Solutions',
+                        data: [7, 7, 6, 5, 5, 7],
+                        borderColor: pizzaSecondary,
+                        backgroundColor: 'rgba(247, 147, 30, 0.1)',
+                        pointBackgroundColor: pizzaSecondary
+                    },
+                    {
+                        label: 'PizzaFun Target',
+                        data: [9, 8, 9, 8, 7, 9],
+                        borderColor: pizzaPrimary,
+                        backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                        pointBackgroundColor: pizzaPrimary
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Platform Capability Comparison',
+                        color: '#FFFFFF',
+                        font: { size: 16, weight: 'bold' }
+                    },
+                    legend: {
+                        labels: { color: '#FFFFFF' }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 10,
+                        grid: { color: 'rgba(255, 107, 53, 0.2)' },
+                        angleLines: { color: 'rgba(255, 107, 53, 0.2)' },
+                        pointLabels: { color: '#FFFFFF' },
+                        ticks: { color: '#FFFFFF', backdropColor: 'transparent' }
+                    }
+                }
+            }
+        });
+
+
+    </script>
+</body>
+</html>
