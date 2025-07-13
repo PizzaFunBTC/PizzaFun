@@ -1,4 +1,8 @@
-# PizzaFun - Revolutionary Bitcoin Token Trading Platform
+---
+hidden: true
+---
+
+# One-pager
 
 ## Project Overview
 
@@ -22,17 +26,17 @@ The platform features a built-in real-time price chart system with instant updat
 
 ### $PIZZA Token Distribution (Total Supply: 210 Million)
 
-| Allocation Category | Amount | Percentage | Vesting Period | Primary Use |
-|---------------------|---------|------------|----------------|-------------|
-| Ecosystem Development | 63 Million | 30% | 8-year linear release | Developer grants, marketing |
-| Trading Mining | 31.5 Million | 15% | Released based on trading volume | Incentivize platform trading activity |
-| Founding Team | 29.4 Million | 14% | 12-month lock + 36-month release | Team incentives |
-| Private Rounds | 21 Million | 10% | 6-month lock + 18-month release | Early development funding |
-| Liquidity Pool | 21 Million | 10% | Milestone-based | Protocol-controlled liquidity |
-| Baking Mining | 12.6 Million | 6% | Activity-based release | Baking phase incentives |
-| Community Airdrop | 10.5 Million | 5% | Instant unlock at TGE | User acquisition |
-| Strategic Partnerships | 10.5 Million | 5% | 3-year linear release | Partners |
-| DAO Treasury | 10.5 Million | 5% | DAO management | Security reserves |
+| Allocation Category    | Amount       | Percentage | Vesting Period                   | Primary Use                           |
+| ---------------------- | ------------ | ---------- | -------------------------------- | ------------------------------------- |
+| Ecosystem Development  | 63 Million   | 30%        | 8-year linear release            | Developer grants, marketing           |
+| Trading Mining         | 31.5 Million | 15%        | Released based on trading volume | Incentivize platform trading activity |
+| Founding Team          | 29.4 Million | 14%        | 12-month lock + 36-month release | Team incentives                       |
+| Private Rounds         | 21 Million   | 10%        | 6-month lock + 18-month release  | Early development funding             |
+| Liquidity Pool         | 21 Million   | 10%        | Milestone-based                  | Protocol-controlled liquidity         |
+| Baking Mining          | 12.6 Million | 6%         | Activity-based release           | Baking phase incentives               |
+| Community Airdrop      | 10.5 Million | 5%         | Instant unlock at TGE            | User acquisition                      |
+| Strategic Partnerships | 10.5 Million | 5%         | 3-year linear release            | Partners                              |
+| DAO Treasury           | 10.5 Million | 5%         | DAO management                   | Security reserves                     |
 
 ### Revenue Model & Token Deflation
 
@@ -58,6 +62,6 @@ PizzaFun has formulated a clear phased development roadmap. In Q4 2024, the plat
 
 From a long-term perspective, PizzaFun's vision is to become the infrastructure layer of the Bitcoin token economy, connecting traditional Bitcoin networks with modern DeFi application ecosystems. Through continuous technological innovation and ecosystem building, PizzaFun will unleash the liquidity potential of Bitcoin, the world's largest crypto asset, driving Bitcoin tokens from niche markets to mainstream adoption and contributing significant strength to the development of the global digital economy.
 
----
+***
 
 **PizzaFun - Make Bitcoin Token Trading as Fast as Lightning!** ⚡
